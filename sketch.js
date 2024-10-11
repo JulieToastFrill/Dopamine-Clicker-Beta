@@ -354,7 +354,16 @@ function touchEnded() {
   inputPosition.y = touches.y;
   isClicked = true;
 }
+//this apparently makes it work on ios. I hope to god it does because if it doesnt im going to be livid.
+function touchStarted() {
+mouseClicked();
+return false;
+}
 
+function touchMoved() {
+mouseClicked();
+return false;
+} 
 
 function modelLoaded() {
   gameState = 0;
