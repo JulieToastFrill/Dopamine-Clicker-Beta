@@ -349,12 +349,22 @@ function mouseReleased() {
   isClicked = true;
 }
 
+function touchStarted(){
+  return false;
+}
+
+function touchMoved(){
+  return false;
+}
+
 function touchEnded() {
   //print(touches.x + touches.y);
   print(touches);
   inputPosition.x = touches.x;
   inputPosition.y = touches.y;
   isClicked = true;
+
+  
 }
 //this apparently makes it work on ios. I hope to god it does because if it doesnt im going to be livid.
 // function touchStarted() {
