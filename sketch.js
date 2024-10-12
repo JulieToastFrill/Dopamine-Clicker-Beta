@@ -67,7 +67,7 @@ function draw() {
   color("black");
   scale(0.2);
   //text(details, 0, -600);
-  text("ver1.1", -1000, -300);
+  text("ver1.3", -1000, -300);
   pop();
 
   smooth();
