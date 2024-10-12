@@ -41,6 +41,8 @@ var inputPosition;
 let details;
 var isClicked = false;
 
+document.addEventListener('touchstart', {});
+
 function preload() {
   DopeModel = loadModel("681-bas-color-print_NIH3D.stl", true);
   // loadFont('fonts\MartianMono-Thin.ttf');
@@ -67,7 +69,7 @@ function draw() {
   color("black");
   scale(0.2);
   //text(details, 0, -600);
-  text("ver1.5", -1000, -300);
+  text("ver1.6", -1000, -300);
   pop();
 
   smooth();
