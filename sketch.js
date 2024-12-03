@@ -40,8 +40,11 @@ var secondAngle = 128;
 var inputPosition;
 let details;
 var isClicked = false;
+var runClick = true;
+var waitTime = 0;
+var saveButton = 0;
+var isSave = 0;
 
-document.addEventListener('touchstart', {});
 
 function preload() {
   DopeModel = loadModel("681-bas-color-print_NIH3D.stl", true);
@@ -49,10 +52,25 @@ function preload() {
   // GriddyVid = createVideo('Kimiko Audio LoopLowQ.mp4');
 }
 function setup() {
+
+  isSave = getItem('isSave');
+
+  if (isSave == 1) {
+  
+  dopamine = getItem('dopamineVal');
+  multiplier = getItem('multiplier');
+  GriddyPercent = getItem('griddyPercent');
+  GriddyNumber = getItem('griddyNumber');
+  //UpgradePrice = getItem('UpgradePrices');
+  AutoDopa = getItem('AutoDopa');
+  }
+
+
+
   inputPosition = createVector(0, 0);
   fontMartianMono = loadFont("MartianMono-VariableFont_wdth,wght.ttf");
   createCanvas(windowWidth, windowHeight, WEBGL);
-  frameRate(60);
+  frameRate(15);
 }
 
 function windowResized() {
@@ -62,14 +80,24 @@ function windowResized() {
 }
 
 function draw() {
-  background(255, 255, 255);
+  
+print("autodopa: " + AutoDopa);
+print("multiplier: " + multiplier);
+print("gamestate value: " + gameState);
+print("Dopamine: " + dopamine);
+
+if (isSave =! 1) {
+  isSave = 1;
+}
+
+
+  background(255, BackColorG, BackColorB);
  //checkClick();
   push();
   textAlign(CENTER);
   color("black");
   scale(0.2);
   //text(details, 0, -600);
-  text("ver1.7", -1000, -300);
   pop();
 
   smooth();
@@ -94,6 +122,8 @@ function draw() {
       100,
       40
     );
+    
+
   }
   //print("\nMenu Button : " + menuButton);
 
@@ -108,10 +138,26 @@ function draw() {
 
   //game state 3
 
-  if (gameState == 3) {
-  }
+  // if (gameState == 3) {
+  // }
   //game state 0
   if (gameState == 0) {
+    // saveButton = collidePointRect(
+    //   inputPosition.x,
+    //   inputPosition.y,
+    //   windowWidth / 2 - 50,
+    //   windowHeight /2 + 410,
+    //   100,
+    //   60
+    // );
+
+    // if (saveButton) {
+    //  // print("SaveButton!!!!");
+    //  saveClick();
+
+
+    // }
+   // rect(-50, 410, 100,60);
     push();
 
     strokeWeight(7);
@@ -127,17 +173,15 @@ function draw() {
     scale(2);
     translate(0, 0, -100);
     rotateY(frameCount * 0.009);
+    
     model(DopeModel);
 
     pop();
 
-    //scale(1.3);
+    //scale(0.5);
 
     //checks if answer is right
-    if (NewProblem) {
-      mathFact();
-      NewProblem = false;
-    }
+    
     if (Correct == true) {
       dopamine += multiplier;
       Correct = false;
@@ -162,10 +206,10 @@ function draw() {
     fill(255);
 
     //collision boxes
-    rect(-200, 0, 160, 120);
-    rect(40, 0, 160, 120);
-    rect(-200, 150, 160, 120);
-    rect(40, 150, 160, 120);
+    // rect(-200, 0, 160, 120);
+    // rect(40, 0, 160, 120);
+    // rect(-200, 150, 160, 120);
+    // rect(40, 150, 160, 120);
 
     fill(0);
 
@@ -178,6 +222,20 @@ function draw() {
     //checks for mouse collision on multiple choice
     //uses the p5.collide2d library https://github.com/bmoren/p5.collide2D
 
+  if (runClick == false) {
+      BackColorB = 0;
+      BackColorG = 0;
+     
+      waitTime += 1;
+      if (waitTime >= 180) {
+        runClick = true;
+      }
+      //print("Running!!!!");
+    }
+  if (runClick == true) {
+    BackColorB = 255;
+    BackColorG = 255;
+      
     Box0 = collidePointRect(
       inputPosition.x,
       inputPosition.y,
@@ -210,7 +268,16 @@ function draw() {
       165,
       125
     );
-  }
+    checkClick();
+ 
+    
+  }  
+   if (NewProblem) {
+      mathFact();
+      NewProblem = false;
+    } 
+   //print(runClick);
+ // print(waitTime);}
   //draws upgrade menu elements
   if (gameState == 1) {
     //draws dopamine model
@@ -283,6 +350,7 @@ function draw() {
 
     //checks for button collision
 
+
     Box0 = collidePointCircle(
       inputPosition.x,
       inputPosition.y,
@@ -311,6 +379,9 @@ function draw() {
       windowHeight / 2 + 120,
       130
     );
+    checkClick();
+
+
   }
 
   //collision debug
@@ -330,13 +401,26 @@ function draw() {
   //     " " +
   //     windowHeight
   // );
-  checkClick();
   
 }
+}
 
+
+// function saveClick() {
+//   storeItem('isSave', isSave);
+//   storeItem('dopamineVal', dopamine);
+//   storeItem('multiplier', multiplier);
+//   storeItem('griddyPercent', GriddyPercent);
+//   storeItem('griddyNumber', GriddyNumber);
+//   storeItem('UpgradePrices', UpgradePrice);
+//   storeItem('AutoDopa', AutoDopa);
+//   print("Save Complete:3:3:3:3");
+//   isClicked = false;
+// }
 /* input translator function!
 
-instead of trying to rework all of the collsion, itll be easier to just translate input from either input into 2 numbers that can be used for button collision checks.
+instead of trying to rework all of the collsion, 
+it'll be easier to just translate input from either input into 2 numbers that can be used for button collision checks.
 This should let touchscreen devices interact, which means this retarded program will just barely function.
 
 this is going to be fucking retarded.
@@ -349,33 +433,14 @@ function mouseReleased() {
   isClicked = true;
 }
 
-function touchStarted(){
-  return false;
-}
-
-function touchMoved(){
-  return false;
-}
-
-function touchEnded() {
+function touchStarted() {
   //print(touches.x + touches.y);
-  print(touches);
   inputPosition.x = touches.x;
   inputPosition.y = touches.y;
   isClicked = true;
-
-  
+  print(touches);
 }
-//this apparently makes it work on ios. I hope to god it does because if it doesnt im going to be livid.
-// function touchStarted() {
-// mouseClicked();
-// return false;
-// }
 
-// function touchMoved() {
-// mouseClicked();
-// return false;
-// } 
 
 function modelLoaded() {
   gameState = 0;
@@ -403,7 +468,7 @@ function mathFact() {
   // Multi[3] = 3;
   else {
     Multi[0] = round(random(0, 99));
-    if (Multi[0] == solution) {
+    while (Multi[0] == solution) {
       Multi[0] = round(random(0, 99));
     }
   }
@@ -411,7 +476,7 @@ function mathFact() {
     Multi[CorrectChoice] = solution;
   } else {
     Multi[1] = round(random(0, 99));
-    if (Multi[1] == solution) {
+    while (Multi[1] == solution) {
       Multi[1] = round(random(0, 99));
     }
   }
@@ -419,14 +484,14 @@ function mathFact() {
     Multi[CorrectChoice] = solution;
   } else {
     Multi[2] = round(random(0, 99));
-    if (Multi[2] == solution) {
+    while (Multi[2] == solution) {
       Multi[2] = round(random(0, 99));
     }
     if (CorrectChoice == 3) {
       Multi[CorrectChoice] = solution;
     } else {
       Multi[3] = round(random(0, 99));
-      if (Multi[3] == solution) {
+      while (Multi[3] == solution) {
         Multi[3] = round(random(0, 99));
       }
     }
@@ -446,6 +511,8 @@ function mathSolution() {
 
 function wrongAnswer() {
   GriddyPercent = 0;
+  waitTime = 0;
+  runClick = false;
 }
 
 function griddyMeter() {
